@@ -1,27 +1,11 @@
 # Assignment_1_Jaime_Brieva_9440
 
+Professor - Attached Items:
 
-import requests
-import json
+1) Python code pulling directly from my data source and loading it to Google Cloud
+2) SGL Scripts
+3) Star Schema was attached to the submission as PDF
+4) This is my Github Repository
+5) Link to dictionary - https://docs.google.com/spreadsheets/d/1PBlqGLrz3GOwKnqL2MgjMRzvGR9xihdnJrpQBqiNI5U/edit?usp=sharing
+   
 
-#testing3
-APP_TOKEN = 'bo4pPeWZdBf3HaJ9djEHPnRJM'
-
-BASE_URL = "https://data.cityofnewyork.us/api/v3/views/c3uy-2p5r/query.json"
-
-params = {
-    "$$app_token": APP_TOKEN, # <-- ADD THE TOKEN HERE
-    "$limit": 5000,
-    "$where": "indicator_name='Fine particles (PM 2.5)'"
-}
-
-try:
-    response = requests.get(BASE_URL, params=params)
-    response.raise_for_status() # Check for 4xx or 5xx errors
-    data = response.json()
-    print(f"Success! Fetched {len(data)} records.")
-
-except requests.exceptions.HTTPError as err:
-    print(f"Error: {err}. Double-check your App Token.")
-except Exception as err:
-    print(f"An unexpected error occurred: {err}")
