@@ -33,4 +33,4 @@ def upload_to_gcs(bucket_name, source_string, destination_blob_name):
     print(f"Data stored google cloud://{bucket_name}/{destination_blob_name}")
 
 if all_data:
-    upload_to_gcs(GCS_BUCKET_NAME, csv_data, gcs_path) # Call is unchanged
+    upload_to_gcs(GCS_BUCKET_NAME, csv_data, gcs_path)
