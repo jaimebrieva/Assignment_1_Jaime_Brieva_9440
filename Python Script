@@ -1,24 +1,37 @@
+!pip install google-cloud-storage pandas
+
 import requests
 import json
+from google.cloud import storage
+from google.oauth2 import service_account # <-- NEW IMPORT
+import datetime
+import pandas as pd 
+
+SERVICE_ACCOUNT_KEY_PATH = "C:/Users/jaime/iCloudDrive/Documents/Baruch Class/CIS9440/Assignment/assignment1-9440-jaime-brieva-f1a6bd225875.json" 
+PROJECT_ID = "assignment1-9440-jaime-brieva"
 
 
-APP_TOKEN = 'bo4pPeWZdBf3HaJ9djEHPnRJM'
+def upload_to_gcs(bucket_name, source_string, destination_blob_name):
+    
 
-BASE_URL = "https://data.cityofnewyork.us/api/v3/views/c3uy-2p5r/query.json"
+    credentials = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_KEY_PATH
+    )
 
-params = {
-    "$$app_token": APP_TOKEN, # <-- ADD THE TOKEN HERE
-    "$limit": 5000,
-    "$where": "indicator_name='Fine particles (PM 2.5)'"
-}
+    # Initialize the client using the explicit credentials AND project ID
+    storage_client = storage.Client(
+        project=PROJECT_ID,
+        credentials=credentials
+    )
+    
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
 
-try:
-    response = requests.get(BASE_URL, params=params)
-    response.raise_for_status() # Check for 4xx or 5xx errors
-    data = response.json()
-    print(f"Success! Fetched {len(data)} records.")
+    blob.upload_from_string(
+        source_string, 
+        content_type='text/csv'
+    )
+    print(f"Data stored google cloud://{bucket_name}/{destination_blob_name}")
 
-except requests.exceptions.HTTPError as err:
-    print(f"Error: {err}. Double-check your App Token.")
-except Exception as err:
-    print(f"An unexpected error occurred: {err}")
+if all_data:
+    upload_to_gcs(GCS_BUCKET_NAME, csv_data, gcs_path) # Call is unchanged
