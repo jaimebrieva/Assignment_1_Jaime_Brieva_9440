@@ -18,7 +18,6 @@ def upload_to_gcs(bucket_name, source_string, destination_blob_name):
         SERVICE_ACCOUNT_KEY_PATH
     )
 
-    # Initialize the client using the explicit credentials AND project ID
     storage_client = storage.Client(
         project=PROJECT_ID,
         credentials=credentials
