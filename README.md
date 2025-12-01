@@ -1,6 +1,7 @@
 # Assignments_Jaime_Brieva_9440
 
 Professor - Attached Items:
+
 Assignment 1
 1) Python code pulling directly from my data source and loading it to Google Cloud
 2) SGL Scripts
