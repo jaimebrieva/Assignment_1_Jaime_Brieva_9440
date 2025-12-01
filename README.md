@@ -16,4 +16,6 @@ Assignment 2
 1) Transformation - Used BigQuery for ETL
 2) Modeling
 3) Serving Data
+https://lookerstudio.google.com/reporting/b6c61ccb-c72d-4cfa-bd84-740d702c3dd4
+
 
