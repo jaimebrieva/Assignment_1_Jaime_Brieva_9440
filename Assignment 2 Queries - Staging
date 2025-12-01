@@ -1,0 +1,54 @@
+
+--1. Drop the original Staging table
+DROP TABLE IF EXISTS `assignment1-9440-jaime-brieva.assignment19440.Staging_RawAirQuality`;
+
+DROP EXTERNAL TABLE IF EXISTS `assignment1-9440-jaime-brieva.assignment19440.External_RawAirQuality`; 
+
+--2. Create the External Table from the CSV.
+CREATE EXTERNAL TABLE `assignment1-9440-jaime-brieva.assignment19440.External_RawAirQuality` (
+
+    _id STRING,
+    _version STRING,
+    _created_at TIMESTAMP,
+    _updated_at TIMESTAMP,
+
+
+    unique_id STRING,
+    indicator_id INT64,
+    name STRING,
+    measure STRING,
+    measure_info STRING,
+    geo_type_name STRING,
+    geo_join_id STRING,
+    geo_place_name STRING,
+    time_period STRING,
+    start_date TIMESTAMP,
+    data_value FLOAT64
+)
+OPTIONS (
+    format = 'CSV',
+    uris = ['gs://assignment19440/raw/nyc_air_quality/full_dataset/nyc_air_quality_raw_20251118_235239.csv'],
+    skip_leading_rows = 1,
+    field_delimiter = ',',
+    null_marker = '',
+    quote = '"'
+);
+
+--3. Staging Table using a SELECT.
+CREATE TABLE `assignment1-9440-jaime-brieva.assignment19440.Staging_RawAirQuality` AS
+SELECT
+    unique_id,
+    indicator_id,
+    name,
+    measure,
+    measure_info,
+    geo_type_name,
+    geo_join_id,
+    geo_place_name,
+    time_period,
+    start_date,
+    data_value
+FROM `assignment1-9440-jaime-brieva.assignment19440.External_RawAirQuality`;
+
+-- 4. Clean up the temporary external table
+DROP EXTERNAL TABLE `assignment1-9440-jaime-brieva.assignment19440.External_RawAirQuality`;
