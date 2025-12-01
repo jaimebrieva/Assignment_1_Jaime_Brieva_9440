@@ -1,0 +1,99 @@
+--A. Populate DimDate
+INSERT INTO `assignment1-9440-jaime-brieva.assignment19440.DimDate` (
+    DateSK,
+    Start_Date,
+    End_Date,
+    Time_Period,
+    Year,
+    Day_of_Week
+)
+SELECT DISTINCT
+    CAST(FORMAT_DATE('%Y%m%d', DATE(t1.start_date)) AS INT64) AS DateSK, 
+    DATE(t1.start_date) AS Start_Date, 
+    DATE_ADD(DATE(t1.start_date), INTERVAL 1 DAY) AS End_Date,
+    t1.time_period AS Time_Period,
+    EXTRACT(YEAR FROM t1.start_date) AS Year,
+    CAST(EXTRACT(DAYOFWEEK FROM t1.start_date) AS STRING) AS Day_of_Week 
+FROM
+    `assignment1-9440-jaime-brieva.assignment19440.Staging_RawAirQuality` AS t1
+WHERE t1.start_date IS NOT NULL
+GROUP BY 1, 2, 3, 4, 5, 6;
+
+
+-- B. Populate DimLocation
+INSERT INTO `assignment1-9440-jaime-brieva.assignment19440.DimLocation` (
+    LocationSK,
+    Borough,
+    Geo_Type_Name,
+    Geo_Place_Name,
+    GeoID
+)
+SELECT DISTINCT
+    FARM_FINGERPRINT(CONCAT(t1.geo_type_name, t1.geo_join_id, t1.geo_place_name)) AS LocationSK,
+    'Unknown' AS Borough, 
+    t1.geo_type_name AS Geo_Type_Name,
+    t1.geo_place_name AS Geo_Place_Name,
+    t1.geo_join_id AS GeoID
+FROM
+    `assignment1-9440-jaime-brieva.assignment19440.Staging_RawAirQuality` AS t1
+WHERE t1.geo_join_id IS NOT NULL
+GROUP BY 1, 2, 3, 4, 5;
+
+-- C. Poplulate DimIndicator
+INSERT INTO `assignment1-9440-jaime-brieva.assignment19440.DimIndicator` (
+    IndicatorSK,
+    Indicator_Name,
+    Measure,
+    Measure_Info,
+    Data_Value_Type
+)
+SELECT DISTINCT
+    FARM_FINGERPRINT(CONCAT(t1.indicator_id, t1.name, t1.measure)) AS IndicatorSK,
+    t1.name AS Indicator_Name,
+    t1.measure AS Measure,
+    t1.measure_info AS Measure_Info,
+    CAST(NULL AS STRING) AS Data_Value_Type
+FROM
+    `assignment1-9440-jaime-brieva.assignment19440.Staging_RawAirQuality` AS t1
+WHERE t1.indicator_id IS NOT NULL
+GROUP BY 1, 2, 3, 4, 5;
+
+--D. Populate FactAirQualityMeasurement
+INSERT INTO `assignment1-9440-jaime-brieva.assignment19440.FactAirQualityMeasurement` (
+    AirQualitySK,     
+    DateSK,
+    LocationSK,
+    IndicatorSK,
+    Data_Value,
+    Data_Value_Footnote, 
+    Message              
+)
+SELECT
+
+    FARM_FINGERPRINT(CONCAT(
+        CAST(t1.start_date AS STRING),
+        t1.geo_join_id,
+        t1.indicator_id,
+        CAST(t1.data_value AS STRING)
+    )) AS AirQualitySK,
+
+
+    CAST(FORMAT_DATE('%Y%m%d', DATE(t1.start_date)) AS INT64) AS DateSK,
+
+
+    FARM_FINGERPRINT(CONCAT(t1.geo_type_name, t1.geo_join_id, t1.geo_place_name)) AS LocationSK,
+
+
+    FARM_FINGERPRINT(CONCAT(t1.indicator_id, t1.name, t1.measure)) AS IndicatorSK,
+
+
+    t1.data_value AS Data_Value,
+    CAST(NULL AS STRING) AS Data_Value_Footnote,
+    CAST(NULL AS STRING) AS Message              
+FROM
+    `assignment1-9440-jaime-brieva.assignment19440.Staging_RawAirQuality` AS t1
+WHERE
+    t1.start_date IS NOT NULL
+    AND t1.geo_join_id IS NOT NULL
+    AND t1.indicator_id IS NOT NULL
+    AND t1.data_value IS NOT NULL;
