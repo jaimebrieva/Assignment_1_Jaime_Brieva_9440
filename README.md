@@ -13,7 +13,7 @@ Assignment 1
 Note: I don't know how to make the database publicly accessible. I tired AllDB
    
 Assignment 2
-1) Transformation
+1) Transformation - Used BigQuery for ETL
 2) Modeling
 3) Serving Data
 
