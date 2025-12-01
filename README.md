@@ -1,7 +1,7 @@
-# Assignment_1_Jaime_Brieva_9440
+# Assignments_Jaime_Brieva_9440
 
 Professor - Attached Items:
-
+Assignment 1
 1) Python code pulling directly from my data source and loading it to Google Cloud
 2) SGL Scripts
 3) Star Schema was attached to the submission as PDF
@@ -11,4 +11,8 @@ Professor - Attached Items:
 
 Note: I don't know how to make the database publicly accessible. I tired AllDB
    
+Assignment 2
+1) Transformation
+2) Modeling
+3) Serving Data
 
