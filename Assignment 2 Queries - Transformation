@@ -1,0 +1,39 @@
+--transformation
+CREATE OR REPLACE TABLE
+    `assignment1-9440-jaime-brieva.assignment19440.FactAirQualityMeasurement_Final` AS
+SELECT
+
+    FARM_FINGERPRINT(CONCAT(t.unique_id, CAST(t.start_date AS STRING))) AS AirQualitySK,
+    
+
+    d.DateSK,
+    l.LocationSK,
+    i.IndicatorSK,
+
+
+    CASE WHEN t.data_value > 100 THEN 'High Risk' WHEN t.data_value > 50 THEN 'Moderate Risk' ELSE 'Low Risk' END AS Air_Quality_Risk_Category,
+    0.0 AS Data_Value_Adj, 
+    t.data_value + 0.0 AS Data_Value_Total, 
+
+
+    t.data_value,
+    t.measure_info AS Data_Value_Footnote, 
+    t.name AS Message 
+
+FROM
+    `assignment1-9440-jaime-brieva.assignment19440.Staging_RawAirQuality` AS t
+
+LEFT JOIN
+    `assignment1-9440-jaime-brieva.assignment19440.DimDate` AS d 
+    ON CAST(FORMAT_TIMESTAMP('%Y%m%d', t.start_date) AS INT64) = d.DateSK
+
+LEFT JOIN
+    `assignment1-9440-jaime-brieva.assignment19440.DimLocation` AS l 
+    ON t.geo_join_id = l.GeoID 
+
+LEFT JOIN
+    `assignment1-9440-jaime-brieva.assignment19440.DimIndicator` AS i
+    ON t.indicator_id = i.IndicatorSK 
+
+WHERE
+    t.data_value IS NOT NULL
